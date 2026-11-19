@@ -1,0 +1,130 @@
+package banking;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+
+import java.util.List;
+
+public class DashboardViewController {
+    @FXML private Label welcomeLabel;
+    @FXML private ComboBox<String> accountType;
+    @FXML private TextField openingBalance;
+    @FXML private TextField branch;
+    @FXML private TextField employerName;
+    @FXML private TextField employerAddress;
+    @FXML private ListView<Account> accountList;
+    @FXML private Label message;
+    @FXML private TextArea historyText;
+
+    @FXML
+    public void initialize() {
+        welcomeLabel.setText(
+            "Welcome, " + AppContext.getCustomer().getDisplayName()
+        );
+
+        accountType.getItems().addAll(
+            "SAVINGS", "INVESTMENT", "CHEQUE"
+        );
+        accountType.setValue("SAVINGS");
+
+        accountList.setCellFactory(list -> new ListCell<Account>() {
+            @Override
+            protected void updateItem(Account account, boolean empty) {
+                super.updateItem(account, empty);
+
+                if (empty || account == null) {
+                    setText(null);
+                } else {
+                    setText(account.getAccountType()
+                        + " | " + account.getAccountNO()
+                        + " | P" + String.format("%.2f",
+                            account.getBalance()));
+                }
+            }
+        });
+
+        refreshAccounts();
+    }
+
+    @FXML
+    private void openAccount() {
+        try {
+            AppContext.getAccountController().openAccount(
+                AppContext.getCustomer(),
+                accountType.getValue(),
+                Double.parseDouble(openingBalance.getText()),
+                branch.getText(),
+                employerName.getText(),
+                employerAddress.getText()
+            );
+            refreshAccounts();
+            message.setText("Account opened.");
+        } catch (Exception e) {
+            message.setText(e.getMessage());
+        }
+    }
+
+    @FXML
+    private void openDepositScreen() {
+        Account account = accountList.getSelectionModel()
+            .getSelectedItem();
+
+        if (account == null) {
+            message.setText("Select an account first.");
+            return;
+        }
+
+        AppContext.setSelectedAccount(account);
+        SceneManager.show("deposit-view.fxml", "Deposit or Withdraw");
+    }
+
+    @FXML
+    private void showHistory() {
+        Account account = accountList.getSelectionModel()
+            .getSelectedItem();
+
+        if (account == null) {
+            message.setText("Select an account first.");
+            return;
+        }
+
+        List<TransactionRepository.TransactionRow> rows =
+            AppContext.getAccountController()
+                .history(account.getAccountNO());
+
+        String result = "";
+        for (TransactionRepository.TransactionRow row : rows) {
+            result += row.date + " | " + row.type + " | P"
+                + String.format("%.2f", row.amount)
+                + " | " + row.description + "\n";
+        }
+
+        if (result.isEmpty()) result = "No transactions yet.";
+        historyText.setText(result);
+    }
+
+    @FXML
+    private void applyInterest() {
+        try {
+            int count = AppContext.getAccountController()
+                .applyInterest(AppContext.getCustomer());
+            refreshAccounts();
+            message.setText("Interest applied to " + count + " account(s).");
+        } catch (Exception e) {
+            message.setText(e.getMessage());
+        }
+    }
+
+    @FXML
+    private void signOut() {
+        AppContext.setCustomer(null);
+        SceneManager.show("login-view.fxml", "Banking System Login");
+    }
+
+    private void refreshAccounts() {
+        accountList.getItems().setAll(
+            AppContext.getAccountController()
+                .accountsFor(AppContext.getCustomer())
+        );
+    }
+}
