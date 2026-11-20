@@ -1,5 +1,9 @@
 banking/CompanyCustomer.class
+banking/DashboardViewController.class
+banking/LoginController.class
+banking/PasswordHasher.class
 banking/Account.class
+banking/SavingsAccount.class
 banking/InvestmentAccount.class
 banking/IndividualCustomer.class
 banking/ChequeAccount.class

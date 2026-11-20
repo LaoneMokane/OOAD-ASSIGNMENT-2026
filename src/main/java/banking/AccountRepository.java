@@ -18,7 +18,7 @@ public class AccountRepository {
         String sql = """
             INSERT INTO accounts(
                 account_number, customer_id, account_type,
-                balance, employer_name, employer_address
+                balance,branch, employer_name, employer_address
             ) VALUES (?, ?, ?, ?, ?, ?, ?)
             """;
 
