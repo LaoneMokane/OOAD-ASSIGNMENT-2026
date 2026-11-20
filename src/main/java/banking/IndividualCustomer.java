@@ -13,7 +13,7 @@ public final class IndividualCustomer extends Customer {
         this.name = name;
         this.surname = surname;
         this.idNumber =idNumber;
-
+     }
     public String getName()
      { return name; }
     public String getSurname() 

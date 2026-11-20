@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25">
+  <tabs>
+    <Tab text="Untitled Tab 1">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Label layoutX="193.0" layoutY="30.0" text="WELCOMING TO MY BANK">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="117.0" layoutY="66.0" text="SECURE BANKING MANAGEMENT SYSTEM">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="loginUsername" layoutX="22.0" layoutY="108.0" promptText="ENTER SURNAME" />
+                  <TextField fx:id="loginPassword" layoutX="23.0" layoutY="154.0" promptText="ENTER PASSWORD" />
+                  <Label fx:id="message" layoutX="32.0" layoutY="200.0" text="Leave Blank" />
+                  <Button layoutX="205.0" layoutY="218.0" mnemonicParsing="false" onAction="#login" text="LOGIN" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Untitled Tab 2">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Label layoutX="126.0" layoutY="14.0" text="WELCOME TO MY BANK">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="112.0" layoutY="60.0" text="SECURE BANKING MANAGEMENT SYSTEM">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="customerType" layoutX="24.0" layoutY="89.0" prefWidth="150.0" promptText="Select customer type" />
+                  <TextField fx:id="firstName" layoutX="211.0" layoutY="89.0" promptText="FirstName" />
+                  <TextField fx:id="lastName" layoutX="212.0" layoutY="127.0" promptText="LastName" />
+                  <TextField fx:id="address" layoutX="214.0" layoutY="160.0" promptText="Address" />
+                  <TextField fx:id="phone" layoutX="214.0" layoutY="197.0" promptText="Phone Number" />
+                  <TextField fx:id="registerUsername" layoutX="212.0" layoutY="229.0" promptText="Choose Username" />
+                  <TextField fx:id="registerPassword" layoutX="214.0" layoutY="266.0" promptText="Choose Password" />
+                  <Label fx:id="message" layoutX="85.0" layoutY="292.0" text="Leave Blank" />
+                  <Button layoutX="351.0" layoutY="310.0" mnemonicParsing="false" onAction="#register" text="REGISTER" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+  </tabs>
+</TabPane>

@@ -12,6 +12,7 @@ public final class CompanyCustomer extends Customer {
         this.companyName = companyName;
         this.registrationNo =registrationNo;
         this.contactPerson = contactPerson;
+            }
 
     public String getCompanyName()
      { return companyName; }
