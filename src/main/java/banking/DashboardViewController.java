@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,8 +18,13 @@ public class DashboardViewController {
     @FXML private Label totalAccountsLabel;
     @FXML private Label totalBalanceLabel;
     @FXML private Label message;
+
+    @FXML private Label accountTotalAccountsLabel;
+    @FXML private Label accountTotalBalanceLabel;
+
     @FXML private Label openAccountMessage;
     @FXML private Label transactionMessage;
+    @FXML private Label historyMessage;
 
     @FXML private ComboBox<String> accountType;
     @FXML private TextField openingBalance;
@@ -41,9 +47,14 @@ public class DashboardViewController {
     @FXML private ComboBox<String> transactionAccount;
     @FXML private ComboBox<String> transactionType;
     @FXML private TextField transactionAmount;
+    @FXML private TextField transactionDescription;
 
     @FXML private ComboBox<String> historyAccount;
-    @FXML private TextArea historyText;
+    @FXML private TableView<TransactionRepository.TransactionRow> historyTable;
+    @FXML private TableColumn<TransactionRepository.TransactionRow, String> historyDateColumn;
+    @FXML private TableColumn<TransactionRepository.TransactionRow, String> historyTypeColumn;
+    @FXML private TableColumn<TransactionRepository.TransactionRow, Double> historyAmountColumn;
+    @FXML private TableColumn<TransactionRepository.TransactionRow, String> historyDescriptionColumn;
 
     @FXML private Pane dashboardPane;
     @FXML private Pane accountPane;
@@ -60,14 +71,19 @@ public class DashboardViewController {
 
     @FXML
     private void initialize() {
-        accountType.getItems().setAll("SAVINGS", "INVESTMENT", "CHEQUE");
+        accountType.getItems().setAll(
+                "SAVINGS", "INVESTMENT", "CHEQUE"
+        );
         accountType.setValue("SAVINGS");
 
-        transactionType.getItems().setAll("DEPOSIT", "WITHDRAWAL");
+        transactionType.getItems().setAll(
+                "DEPOSIT", "WITHDRAWAL"
+        );
         transactionType.setValue("DEPOSIT");
 
         configureAccountTable();
         configureRecentTable();
+        configureHistoryTable();
     }
 
     public void configure(Stage stage, Customer customer,
@@ -82,56 +98,90 @@ public class DashboardViewController {
         this.transactions = transactions;
         this.accountController = accountController;
 
-        welcomeLabel.setText("Welcome back, " + customer.getDisplayName());
+        welcomeLabel.setText(
+                "Welcome back, " + customer.getDisplayName()
+        );
+
         showDashboard();
     }
 
     private void configureAccountTable() {
         accountNumberColumn.setCellValueFactory(cell ->
-                new ReadOnlyStringWrapper(cell.getValue().getAccountNO()));
+                new ReadOnlyStringWrapper(
+                        cell.getValue().getAccountNO()
+                )
+        );
 
         accountTypeColumn.setCellValueFactory(cell ->
-                new ReadOnlyStringWrapper(cell.getValue().getAccountType()));
+                new ReadOnlyStringWrapper(
+                        cell.getValue().getAccountType()
+                )
+        );
 
         accountBalanceColumn.setCellValueFactory(cell ->
-                new ReadOnlyObjectWrapper<>(cell.getValue().getBalance()));
+                new ReadOnlyObjectWrapper<>(
+                        cell.getValue().getBalance()
+                )
+        );
 
         accountStatusColumn.setCellValueFactory(cell ->
-                new ReadOnlyStringWrapper("Active"));
+                new ReadOnlyStringWrapper("Active")
+        );
 
-        accountBalanceColumn.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(Double value, boolean empty) {
-                super.updateItem(value, empty);
-                setText(empty || value == null
-                        ? null
-                        : String.format("P %.2f", value));
-            }
-        });
+        accountBalanceColumn.setCellFactory(column -> moneyCell());
     }
 
     private void configureRecentTable() {
         recentDateColumn.setCellValueFactory(cell ->
-                new ReadOnlyStringWrapper(cell.getValue().date));
+                new ReadOnlyStringWrapper(cell.getValue().date)
+        );
 
         recentTypeColumn.setCellValueFactory(cell ->
-                new ReadOnlyStringWrapper(cell.getValue().type));
+                new ReadOnlyStringWrapper(cell.getValue().type)
+        );
 
         recentAccountColumn.setCellValueFactory(cell ->
-                new ReadOnlyStringWrapper(cell.getValue().account));
+                new ReadOnlyStringWrapper(cell.getValue().account)
+        );
 
         recentAmountColumn.setCellValueFactory(cell ->
-                new ReadOnlyObjectWrapper<>(cell.getValue().amount));
+                new ReadOnlyObjectWrapper<>(cell.getValue().amount)
+        );
 
-        recentAmountColumn.setCellFactory(column -> new TableCell<>() {
+        recentAmountColumn.setCellFactory(column -> moneyCell());
+    }
+
+    private void configureHistoryTable() {
+        historyDateColumn.setCellValueFactory(cell ->
+                new ReadOnlyStringWrapper(cell.getValue().date)
+        );
+
+        historyTypeColumn.setCellValueFactory(cell ->
+                new ReadOnlyStringWrapper(cell.getValue().type)
+        );
+
+        historyAmountColumn.setCellValueFactory(cell ->
+                new ReadOnlyObjectWrapper<>(cell.getValue().amount)
+        );
+
+        historyDescriptionColumn.setCellValueFactory(cell ->
+                new ReadOnlyStringWrapper(cell.getValue().description)
+        );
+
+        historyAmountColumn.setCellFactory(column -> moneyCell());
+    }
+
+    private <T> TableCell<T, Double> moneyCell() {
+        return new TableCell<>() {
             @Override
             protected void updateItem(Double value, boolean empty) {
                 super.updateItem(value, empty);
+
                 setText(empty || value == null
                         ? null
                         : String.format("P %.2f", value));
             }
-        });
+        };
     }
 
     private void showOnly(Pane selected) {
@@ -140,7 +190,8 @@ public class DashboardViewController {
                 accountPane,
                 openAccountPane,
                 transactionsPane,
-                historyPane)) {
+                historyPane
+        )) {
             boolean active = pane == selected;
             pane.setVisible(active);
             pane.setManaged(active);
@@ -201,24 +252,34 @@ public class DashboardViewController {
     @FXML
     private void submitTransaction() {
         try {
-            String selectedAccount = transactionAccount.getValue();
+            String selected = transactionAccount.getValue();
 
-            if (selectedAccount == null) {
+            if (selected == null) {
                 throw new IllegalArgumentException("Choose an account.");
             }
 
-            String number = selectedAccount.substring(
-                    0, selectedAccount.indexOf(" | "));
-            double amount = Double.parseDouble(transactionAmount.getText());
+            String number = selected.substring(
+                    0, selected.indexOf(" | ")
+            );
+
+            double amount =
+                    Double.parseDouble(transactionAmount.getText());
+
+            String description = transactionDescription.getText();
 
             if ("DEPOSIT".equals(transactionType.getValue())) {
-                accountController.deposit(customer, number, amount);
+                accountController.deposit(
+                        customer, number, amount, description
+                );
             } else {
-                accountController.withdraw(customer, number, amount);
+                accountController.withdraw(
+                        customer, number, amount, description
+                );
             }
 
             transactionMessage.setText("Transaction completed.");
             transactionAmount.clear();
+            transactionDescription.clear();
             refreshAccounts();
         } catch (Exception e) {
             transactionMessage.setText(e.getMessage());
@@ -228,36 +289,23 @@ public class DashboardViewController {
     @FXML
     private void loadHistory() {
         try {
-            String selectedAccount = historyAccount.getValue();
+            String selected = historyAccount.getValue();
 
-            if (selectedAccount == null) {
+            if (selected == null) {
                 throw new IllegalArgumentException("Choose an account.");
             }
 
-            String number = selectedAccount.substring(
-                    0, selectedAccount.indexOf(" | "));
+            String number = selected.substring(
+                    0, selected.indexOf(" | ")
+            );
 
-            List<TransactionRepository.TransactionRow> rows =
-                    accountController.history(number);
+            historyTable.getItems().setAll(
+                    accountController.history(number)
+            );
 
-            StringBuilder result = new StringBuilder();
-
-            for (var row : rows) {
-                result.append(row.date)
-                        .append(" | ")
-                        .append(row.type)
-                        .append(" | P")
-                        .append(String.format("%.2f", row.amount))
-                        .append(" | ")
-                        .append(row.description)
-                        .append(System.lineSeparator());
-            }
-
-            historyText.setText(rows.isEmpty()
-                    ? "No transactions yet."
-                    : result.toString());
+            historyMessage.setText("");
         } catch (Exception e) {
-            historyText.setText(e.getMessage());
+            historyMessage.setText(e.getMessage());
         }
     }
 
@@ -266,14 +314,20 @@ public class DashboardViewController {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource(
-                            "/banking/views/login-view.fxml"));
+                            "/banking/views/login-view.fxml"
+                    )
+            );
 
             Scene scene = new Scene(loader.load());
             LoginController controller = loader.getController();
 
             controller.configure(
-                    stage, customers, accounts, transactions,
-                    accountController);
+                    stage,
+                    customers,
+                    accounts,
+                    transactions,
+                    accountController
+            );
 
             stage.setScene(scene);
             stage.setTitle("Banking System Login");
@@ -283,48 +337,64 @@ public class DashboardViewController {
     }
 
     private void refreshAccounts() {
-        List<Account> list = accountController.accountsFor(customer);
+        List<Account> accountList =
+                accountController.accountsFor(customer);
 
-        accountTable.getItems().setAll(list);
+        accountTable.getItems().setAll(accountList);
 
-        totalAccountsLabel.setText(String.valueOf(list.size()));
+        totalAccountsLabel.setText(
+                String.valueOf(accountList.size())
+        );
 
-        double totalBalance = list.stream()
+        double totalBalance = accountList.stream()
                 .mapToDouble(Account::getBalance)
                 .sum();
 
         totalBalanceLabel.setText(
-                String.format("P %.2f", totalBalance));
+                String.format("P %.2f", totalBalance)
+        );
 
-        List<String> accountChoices = list.stream()
+        accountTotalAccountsLabel.setText(
+                String.valueOf(accountList.size())
+        );
+
+        accountTotalBalanceLabel.setText(
+                String.format("P %.2f", totalBalance)
+        );
+
+        List<String> choices = accountList.stream()
                 .map(account -> account.getAccountNO()
                         + " | " + account.getAccountType())
                 .toList();
 
-        transactionAccount.getItems().setAll(accountChoices);
-        historyAccount.getItems().setAll(accountChoices);
+        transactionAccount.getItems().setAll(choices);
+        historyAccount.getItems().setAll(choices);
 
         List<RecentTransaction> recent = new ArrayList<>();
 
-        for (Account account : list) {
+        for (Account account : accountList) {
             List<TransactionRepository.TransactionRow> rows =
                     accountController.history(account.getAccountNO());
 
-            for (var row : rows) {
+            for (TransactionRepository.TransactionRow row : rows) {
                 recent.add(new RecentTransaction(
                         row.date,
                         row.type,
                         account.getAccountNO(),
-                        row.amount));
+                        row.amount
+                ));
             }
         }
 
         recent.sort(
                 Comparator.comparing(
-                        (RecentTransaction row) -> row.date).reversed());
+                        (RecentTransaction row) -> row.date
+                ).reversed()
+        );
 
         recentTable.getItems().setAll(
-                recent.stream().limit(5).toList());
+                recent.stream().limit(5).toList()
+        );
     }
 
     private static final class RecentTransaction {
