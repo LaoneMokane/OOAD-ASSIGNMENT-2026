@@ -1,6 +1,7 @@
 package banking;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class Customer {
@@ -13,23 +14,18 @@ public abstract class Customer {
 
     protected Customer(String customerID, String address, String phone,
                        String username, String passwordHash) {
-       this.customerID = customerID;
-       this.address = address;
-       this.phone = phone;
-       this.username = username;
-       this.passwordHash = passwordHash;
+        this.customerID = customerID;
+        this.address = address;
+        this.phone = phone;
+        this.username = username;
+        this.passwordHash = passwordHash;
     }
 
-    public String getCustomerID() 
-    { return customerID; }
-    public String getAddress() 
-    { return address; }
-    public String getPhone()
-     { return phone; }
-    public String getUsername() 
-    { return username; }
-    public String getPasswordHash() 
-    { return passwordHash; }
+    public String getCustomerID() { return customerID; }
+    public String getAddress() { return address; }
+    public String getPhone() { return phone; }
+    public String getUsername() { return username; }
+    public String getPasswordHash() { return passwordHash; }
 
     public void openAccount(Account account) {
         addAccount(account);
@@ -38,19 +34,28 @@ public abstract class Customer {
     public void addAccount(Account account) {
         if (account == null || account.getCustomer() != this) {
             throw new IllegalArgumentException(
-                "The account belong to a different customer."
+                    "Account belongs to a different customer."
             );
         }
- accounts.add(account);
+        if (!accounts.contains(account)) {
+            accounts.add(account);
+        }
     }
 
-      public List<Account> getAccount() {
-        return accounts;
+    public List<Account> getAccounts() {
+        return Collections.unmodifiableList(accounts);
+    }
+
+    public List<Account> getAccount() {
+        return getAccounts();
     }
 
     public void replaceAccounts(List<Account> newAccounts) {
-        accounts = new ArrayList<>(newAccounts);
+        accounts.clear();
+        if (newAccounts != null) {
+            accounts.addAll(newAccounts);
+        }
     }
 
     public abstract String getDisplayName();
-}   
+}

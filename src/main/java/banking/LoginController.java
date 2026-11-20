@@ -1,51 +1,67 @@
 package banking;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.util.Optional;
 
-public class LoginViewController {
+public class LoginController {
     @FXML private TextField loginUsername;
     @FXML private PasswordField loginPassword;
     @FXML private ComboBox<String> customerType;
-
     @FXML private TextField firstName;
     @FXML private TextField lastName;
+    @FXML private TextField idNumber;
+    @FXML private TextField companyName;
+    @FXML private TextField registrationNumber;
+    @FXML private TextField contactPerson;
     @FXML private TextField address;
     @FXML private TextField phone;
     @FXML private TextField registerUsername;
     @FXML private PasswordField registerPassword;
-    @FXML private Label message;
+    @FXML private Label loginMessage;
+    @FXML private Label registerMessage;
+
+    private Stage stage;
+    private CustomerRepository customers;
+    private AccountRepository accounts;
+    private TransactionRepository transactions;
+    private AccountController accountController;
 
     @FXML
-    public void initialize() {
-        customerType.getItems().addAll("INDIVIDUAL", "COMPANY");
+    private void initialize() {
+        customerType.getItems().setAll("INDIVIDUAL", "COMPANY");
         customerType.setValue("INDIVIDUAL");
+    }
+
+    public void configure(Stage stage, CustomerRepository customers,
+                          AccountRepository accounts,
+                          TransactionRepository transactions,
+                          AccountController accountController) {
+        this.stage = stage;
+        this.customers = customers;
+        this.accounts = accounts;
+        this.transactions = transactions;
+        this.accountController = accountController;
     }
 
     @FXML
     private void login() {
         try {
-            Optional<Customer> result =
-                AppContext.getLoginController().login(
-                    loginUsername.getText(),
-                    loginPassword.getText()
-                );
+            Optional<Customer> result = customers.login(
+                    loginUsername.getText().trim(),
+                    loginPassword.getText());
 
-            if (result.isPresent()) {
-                AppContext.setCustomer(result.get());
-                SceneManager.show(
-                    "dashboard-view.fxml", "Banking Dashboard"
-                );
-            } else {
-                message.setText("Username or password is incorrect.");
+            if (result.isEmpty()) {
+                loginMessage.setText("Username or password is incorrect.");
+                return;
             }
+            showDashboard(result.get());
         } catch (Exception e) {
-            message.setText(e.getMessage());
+            loginMessage.setText(e.getMessage());
         }
     }
 
@@ -53,33 +69,35 @@ public class LoginViewController {
     private void register() {
         try {
             Customer customer;
-
             if ("INDIVIDUAL".equals(customerType.getValue())) {
-                customer =
-                    AppContext.getLoginController().registerIndividual(
+                customer = customers.registerIndividual(
                         address.getText(), phone.getText(),
-                        registerUsername.getText(),
-                        registerPassword.getText(),
-                        firstName.getText(),
-                        lastName.getText()
-                    );
+                        registerUsername.getText(), registerPassword.getText(),
+                        firstName.getText(), lastName.getText(),
+                        idNumber.getText());
             } else {
-                customer =
-                    AppContext.getLoginController().registerCompany(
+                customer = customers.registerCompany(
                         address.getText(), phone.getText(),
-                        registerUsername.getText(),
-                        registerPassword.getText(),
-                        firstName.getText(),
-                        lastName.getText()
-                    );
+                        registerUsername.getText(), registerPassword.getText(),
+                        companyName.getText(), registrationNumber.getText(),
+                        contactPerson.getText());
             }
-
-            AppContext.setCustomer(customer);
-            SceneManager.show(
-                "dashboard-view.fxml", "Banking Dashboard"
-            );
+            showDashboard(customer);
         } catch (Exception e) {
-            message.setText(e.getMessage());
+            registerMessage.setText(e.getMessage());
         }
+    }
+
+    private void showDashboard(Customer customer) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/banking/views/dashboard-view.fxml"));
+        Scene scene = new Scene(loader.load());
+
+        DashboardViewController controller = loader.getController();
+        controller.configure(stage, customer, customers, accounts,
+                transactions, accountController);
+
+        stage.setScene(scene);
+        stage.setTitle("Banking Dashboard");
     }
 }

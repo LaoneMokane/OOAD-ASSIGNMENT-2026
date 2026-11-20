@@ -15,11 +15,14 @@ public final class CompanyCustomer extends Customer {
             }
 
     public String getCompanyName()
-     { return companyName; }
+       { return companyName; }
     public String getRegistrationNo() 
     { return registrationNo; }
     public String getContactPerson()
      { return contactPerson; }
+     public String getRegistrationNumber() {
+    return registrationNo;
+}
 
     @Override
     public String getDisplayName() {

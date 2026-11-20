@@ -18,32 +18,27 @@ public final class AccountController {
     }
 
     public Account openAccount(Customer customer, String type,
-            double openingBalance, String branch,
-            String employerName, String employerAddress) {
+                               double openingBalance, String branch,
+                               String employerName, String employerAddress) {
         String number = "BW" + UUID.randomUUID()
-            .toString().replace("-", "").substring(0, 10).toUpperCase();
+                .toString().replace("-", "").substring(0, 10).toUpperCase();
 
-         Account account;
-
+        Account account;
         if ("SAVINGS".equals(type)) {
             account = new SavingsAccount(
-                number, openingBalance, branch, customer
-            );
+                    number, openingBalance, branch, customer);
         } else if ("INVESTMENT".equals(type)) {
             account = new InvestmentAccount(
-                number, openingBalance, branch, customer
-            );
+                    number, openingBalance, branch, customer);
         } else if ("CHEQUE".equals(type)) {
-            account = new ChequeAccount(
-                number, openingBalance, branch, customer,
-                employerName, employerAddress
-            );
+            account = new ChequeAccount(number, openingBalance, branch,
+                    customer, employerName, employerAddress);
         } else {
             throw new IllegalArgumentException("Choose an account type.");
         }
 
-        customer.openAccount(account);
         accounts.save(account);
+        customer.openAccount(account);
         return account;
     }
 
@@ -55,29 +50,29 @@ public final class AccountController {
         return transact(customer, number, amount, false);
     }
 
+    private Account transact(Customer customer, String number,
+                             double amount, boolean isDeposit) {
+        Account account = accounts.findByNumber(customer, number)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Account not found."));
+
+        if (isDeposit) {
+            account.deposit(amount);
+        } else {
+            account.withdraw(amount);
+        }
+
+        List<Transactions> history = account.getTransactions();
+        accounts.saveBalanceAndTransaction(
+                account, history.get(history.size() - 1));
+        return account;
+    }
+
     public List<TransactionRepository.TransactionRow> history(String number) {
         return transactions.findByAccount(number);
     }
 
     public int applyInterest(Customer customer) {
-        InterestScheduler scheduler = new InterestScheduler(accounts);
-        return scheduler.applyToCustomer(customer);
-    }
-
-    private void makeTransaction(Customer customer, String number,
-                             double amount, boolean isDeposit) {
-        Account account = accounts.findByNumber(customer, number)
-            .orElseThrow(() ->
-                new IllegalArgumentException("Account not found.")
-            );
-
-        if (isDeposit) account.deposit(amount);
-        else account.withdraw(amount);
-
-        List<Transactions> history = account.getTransactions();
-        accounts.saveBalanceAndTransaction(
-            account, history.get(history.size() - 1)
-        );
-        return account;
+        return new InterestScheduler(accounts).applyToCustomer(customer);
     }
 }

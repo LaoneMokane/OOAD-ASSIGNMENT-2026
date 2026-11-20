@@ -1,93 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="banking.DashboardViewController"
+            prefWidth="1100" prefHeight="700">
+    <left>
+        <VBox prefWidth="220" spacing="16"
+              style="-fx-background-color: #12345A;">
+            <padding>
+                <Insets top="25" right="18" bottom="20" left="18"/>
+            </padding>
+            <Label text="MY BANK"
+                   style="-fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold;"/>
+            <Label text="BANKING SYSTEM"
+                   style="-fx-text-fill: #AFC8E8; -fx-font-size: 16px;"/>
+            <Separator/>
+            <Button text="DASHBOARD" onAction="#showDashboard" maxWidth="Infinity"/>
+            <Button text="MY ACCOUNTS" onAction="#showMyAccount" maxWidth="Infinity"/>
+            <Button text="OPEN ACCOUNT" onAction="#showOpenAccount" maxWidth="Infinity"/>
+            <Button text="TRANSACTIONS" onAction="#showTransactions" maxWidth="Infinity"/>
+            <Button text="TRANSACTION HISTORY" onAction="#showTransactionHistory" maxWidth="Infinity"/>
+            <Button text="SIGN OUT" onAction="#signout" maxWidth="Infinity"/>
+        </VBox>
+    </left>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <BorderPane layoutX="78.0" layoutY="54.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
-         <left>
-            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="220.0" spacing="20.0" style="-fx-background-color: #12345A;;" BorderPane.alignment="TOP_LEFT">
-               <padding>
-                  <Insets top="25.0" />
-               </padding>
-               <children>
-                  <Label style="-fx-text-fill: WHITE; -fx-font-size: 25px; -fx-font-weight: BOLD;" text="MY BANK" />
-                  <Label style="-fx-text-fill: #AFC8E8; -fx-font-size: 18px;" text="BANKING SYSTEM" />
-                  <Separator prefWidth="200.0" />
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showDashboard" prefHeight="42.0" prefWidth="170.0" style="-fx-cursor: hand; -fx-background-radius: 7px;" text="DASHBOARD" />
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showMyAccount" prefHeight="42.0" prefWidth="170.0" style="-fx-cursor: hand; -fx-background-radius: 7px;" text="MY ACCOUNTS" />
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showOpenAccount" prefHeight="42.0" prefWidth="170.0" style="-fx-cursor: hand; -fx-background-radius: 7px;" text="OPEN ACCOUNT" />
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showTransactions" prefHeight="42.0" prefWidth="170.0" style="-fx-cursor: hand; -fx-background-radius: 7px;" text="TRANSACTIONS" />
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showTransactionHistory" prefHeight="42.0" prefWidth="170.0" style="-fx-cursor: hand; -fx-background-radius: 7px;" text="TRANSACTION HISTORY" />
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#signout" prefHeight="42.0" prefWidth="170.0" style="-fx-cursor: hand; -fx-background-radius: 7px;" text="SIGNOUT" />
-               </children>
+    <center>
+        <StackPane style="-fx-background-color: #eef1f5;">
+            <padding>
+                <Insets top="30" right="35" bottom="25" left="35"/>
+            </padding>
+
+            <VBox fx:id="dashboardPane" spacing="18">
+                <Label fx:id="welcomeLabel" text="WELCOME BACK"
+                       style="-fx-font-size: 26px; -fx-font-weight: bold;"/>
+                <Label text="YOUR BANKING OVERVIEW"/>
+                <Label fx:id="totalAccountsLabel" text="TOTAL ACCOUNTS: 0"/>
+                <Label fx:id="totalBalanceLabel" text="TOTAL BALANCE: P0.00"/>
+                <Label fx:id="message"/>
             </VBox>
-         </left>
-         <center>
-            <StackPane fx:id="contentStack" prefHeight="700.0" prefWidth="880.0" BorderPane.alignment="CENTER">
-               <children>
-                  <AnchorPane fx:id="dashboardPane" prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <Label layoutX="404.0" layoutY="108.0" text="YOUR BANKING OVERVIEW" />
-                        <Label layoutX="294.0" layoutY="158.0" text="TOTAL ACCOUNTS" />
-                        <Label layoutX="299.0" layoutY="207.0" text="TOTAL BALANCE" />
-                        <ListView fx:id="accountList" layoutX="424.0" layoutY="143.0" prefHeight="200.0" prefWidth="200.0" />
-                        <Label fx:id="welcomeLabel" layoutX="460.0" layoutY="52.0" text="WELCOME BACK, CUSTOMER" />
-                        <AnchorPane fx:id="accountPane" layoutX="394.0" layoutY="125.0" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <VBox layoutX="70.0" prefHeight="200.0" prefWidth="100.0">
-                                 <children>
-                                    <Label text="MY ACCOUNTS" />
-                                    <ListView fx:id="accountList" prefHeight="200.0" prefWidth="200.0" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="424.0" layoutY="350.0" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <Label layoutX="72.0" layoutY="14.0" text="OPEN NEW ACCOUNT" />
-                              <ComboBox fx:id="accountType" layoutX="-3.0" layoutY="38.0" prefWidth="150.0" promptText="Account Type" />
-                              <TextField fx:id="openingBalance" layoutY="75.0" promptText="Opening Balance" />
-                              <TextField fx:id="employerName" layoutX="1.0" layoutY="101.0" promptText="EmployerName" />
-                              <TextField fx:id="employerAddress" layoutX="1.0" layoutY="127.0" promptText="Employer Address" />
-                              <Label fx:id="openAccountMessage" layoutX="14.0" layoutY="153.0" text="Leave Text Blank" />
-                              <Button layoutX="125.0" layoutY="158.0" mnemonicParsing="false" onAction="#openAccount" text="Open Account" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="118.0" layoutY="343.0" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <Label fx:id="transactionAccount" layoutX="40.0" layoutY="14.0" text="DEPOSIT/WITHDRAW" />
-                              <ComboBox fx:id="transactionAccount" layoutY="32.0" prefWidth="150.0" promptText="Select Account" />
-                              <ComboBox fx:id="transactionType" layoutY="75.0" prefWidth="150.0" promptText="Select Transaction type" />
-                              <TextField fx:id="transactionAmount" layoutX="1.0" layoutY="108.0" promptText="Enter Amount" />
-                              <Label fx:id="transactionMessage" layoutX="14.0" layoutY="140.0" text="Leave Blank" />
-                              <Button layoutX="111.0" layoutY="158.0" mnemonicParsing="false" text="Submit Transaction" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="59.0" layoutY="58.0" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <Label layoutX="86.0" layoutY="14.0" text="Transaction History" />
-                              <ComboBox fx:id="historyAccount" layoutX="11.0" layoutY="44.0" prefWidth="150.0" promptText="Select Account" />
-                              <Label fx:id="historyText" layoutX="27.0" layoutY="83.0" text="leave Blank" />
-                              <Button layoutX="111.0" layoutY="138.0" mnemonicParsing="false" onAction="#loadHistory" text="Load History" />
-                           </children>
-                        </AnchorPane>
-                     </children>
-                  </AnchorPane>
-               </children>
-            </StackPane>
-         </center>
-      </BorderPane>
-   </children>
-</AnchorPane>
+
+            <VBox fx:id="accountPane" spacing="12"
+                  visible="false" managed="false">
+                <Label text="MY ACCOUNTS"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <ListView fx:id="accountList" VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <VBox fx:id="openAccountPane" spacing="10"
+                  visible="false" managed="false">
+                <Label text="OPEN NEW ACCOUNT"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <ComboBox fx:id="accountType" promptText="Account type" maxWidth="350"/>
+                <TextField fx:id="openingBalance" promptText="Opening balance" maxWidth="350"/>
+                <TextField fx:id="branch" promptText="Branch" maxWidth="350"/>
+                <TextField fx:id="employerName" promptText="Employer name (cheque)" maxWidth="350"/>
+                <TextField fx:id="employerAddress" promptText="Employer address (cheque)" maxWidth="350"/>
+                <Button text="OPEN ACCOUNT" onAction="#openAccount"/>
+                <Label fx:id="openAccountMessage"/>
+            </VBox>
+
+            <VBox fx:id="transactionsPane" spacing="12"
+                  visible="false" managed="false">
+                <Label text="DEPOSIT OR WITHDRAW"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <ComboBox fx:id="transactionAccount" promptText="Choose account" maxWidth="350"/>
+                <ComboBox fx:id="transactionType" promptText="Transaction type" maxWidth="350"/>
+                <TextField fx:id="transactionAmount" promptText="Amount" maxWidth="350"/>
+                <Button text="SUBMIT TRANSACTION" onAction="#submitTransaction"/>
+                <Label fx:id="transactionMessage"/>
+            </VBox>
+
+            <VBox fx:id="historyPane" spacing="12"
+                  visible="false" managed="false">
+                <Label text="TRANSACTION HISTORY"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <ComboBox fx:id="historyAccount" promptText="Choose account" maxWidth="350"/>
+                <Button text="LOAD HISTORY" onAction="#loadHistory"/>
+                <TextArea fx:id="historyText" editable="false"
+                          wrapText="true" VBox.vgrow="ALWAYS"/>
+            </VBox>
+        </StackPane>
+    </center>
+</BorderPane>
