@@ -1,11 +1,5 @@
 banking/CompanyCustomer.class
-banking/DashboardViewController.class
-banking/LoginController.class
-banking/PasswordHasher.class
 banking/Account.class
-banking/SavingsAccount.class
-banking/InvestmentAccount.class
-banking/IndividualCustomer.class
 banking/ChequeAccount.class
 banking/TransactionRepository.class
 banking/Transactions.class
@@ -14,8 +8,5 @@ banking/AccountController.class
 banking/AccountRepository.class
 banking/AccountOperations.class
 banking/CustomerRepository.class
-banking/InterestBearing.class
 banking/TransactionRepository$TransactionRow.class
-banking/Database.class
-banking/InterestScheduler.class
 banking/Customer.class
