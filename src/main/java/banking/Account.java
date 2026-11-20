@@ -26,32 +26,66 @@ public abstract class Account implements AccountOperations {
             throw new IllegalArgumentException("Invalid opening balance.");
         }
 
-        this.accountNO = accountNO;
+        this.accountNO = accountNO.trim();
         this.balance = round(openingBalance);
         this.branch = branch.trim();
         this.customer = customer;
     }
 
-    public String getAccountNO() { return accountNO; }
-    public String getBranch() { return branch; }
-    public Customer getCustomer() { return customer; }
-    public double getBalance() { return balance; }
+    public String getAccountNO() {
+        return accountNO;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    @Override
+    public double getBalance() {
+        return balance;
+    }
 
     @Override
     public void deposit(double amount) {
+        deposit(amount, "Money deposited");
+    }
+
+    public void deposit(double amount, String description) {
         requirePositive(amount);
         balance = round(balance + amount);
-        new Transactions("DEPOSIT", amount, "Money deposited", this).save();
+
+        new Transactions(
+                "DEPOSIT",
+                amount,
+                cleanDescription(description, "Money deposited"),
+                this
+        ).save();
     }
 
     @Override
     public void withdraw(double amount) {
+        withdraw(amount, "Money withdrawn");
+    }
+
+    public void withdraw(double amount, String description) {
         requirePositive(amount);
-        if (balance < amount) {
+
+        if (balance < round(amount)) {
             throw new IllegalStateException("Not enough money in account.");
         }
+
         balance = round(balance - amount);
-        new Transactions("WITHDRAWAL", amount, "Money withdrawn", this).save();
+
+        new Transactions(
+                "WITHDRAWAL",
+                amount,
+                cleanDescription(description, "Money withdrawn"),
+                this
+        ).save();
     }
 
     public abstract String getAccountType();
@@ -62,10 +96,12 @@ public abstract class Account implements AccountOperations {
 
     public String getTransaction() {
         StringBuilder result = new StringBuilder();
+
         for (Transactions transaction : transactions) {
             result.append(transaction.getDetails())
-                  .append(System.lineSeparator());
+                    .append(System.lineSeparator());
         }
+
         return result.toString();
     }
 
@@ -75,11 +111,23 @@ public abstract class Account implements AccountOperations {
         }
     }
 
+    void removeTransaction(Transactions transaction) {
+        transactions.remove(transaction);
+    }
+
+    void restoreBalance(double value) {
+        balance = round(value);
+    }
+
     protected void creditInterest(double amount) {
         requirePositive(amount);
         balance = round(balance + amount);
+
         new Transactions(
-                "INTEREST", amount, "Monthly interest credited", this
+                "INTEREST",
+                amount,
+                "Monthly interest credited",
+                this
         ).save();
     }
 
@@ -89,6 +137,12 @@ public abstract class Account implements AccountOperations {
                     "Amount must be greater than zero."
             );
         }
+    }
+
+    private static String cleanDescription(String value, String fallback) {
+        return value == null || value.isBlank()
+                ? fallback
+                : value.trim();
     }
 
     protected static double round(double amount) {

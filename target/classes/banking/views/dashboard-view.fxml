@@ -7,17 +7,19 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="banking.DashboardViewController"
             prefWidth="1100" prefHeight="700"
-            style="-fx-background-color: #f3f6fa;">
+            style="-fx-background-color: #f1f4f8;">
 
     <left>
-        <VBox spacing="14" prefWidth="220"
-              style="-fx-background-color: #12345a;">
-            <padding><Insets top="24" right="14" bottom="20" left="14"/></padding>
+        <VBox prefWidth="220" spacing="16"
+              style="-fx-background-color: #12345A;">
+            <padding>
+                <Insets top="25" right="18" bottom="20" left="18"/>
+            </padding>
 
             <Label text="MY BANK"
                    style="-fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold;"/>
             <Label text="BANKING SYSTEM"
-                   style="-fx-text-fill: #afc8e8; -fx-font-size: 16px;"/>
+                   style="-fx-text-fill: #AFC8E8; -fx-font-size: 16px;"/>
             <Separator/>
 
             <Button text="DASHBOARD" onAction="#showDashboard" maxWidth="Infinity"/>
@@ -30,98 +32,164 @@
     </left>
 
     <center>
-        <StackPane style="-fx-padding: 24;">
+        <StackPane style="-fx-background-color: #f1f4f8;">
+            <padding>
+                <Insets top="24" right="30" bottom="24" left="30"/>
+            </padding>
 
-            <VBox fx:id="dashboardPane" spacing="18">
+            <!-- Dashboard overview -->
+            <VBox fx:id="dashboardPane" spacing="16"
+                  maxWidth="Infinity" maxHeight="Infinity">
                 <VBox spacing="5"
                       style="-fx-background-color: #12365a; -fx-background-radius: 10; -fx-padding: 20;">
                     <Label fx:id="welcomeLabel" text="Welcome back"
-                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                           style="-fx-font-size: 25px; -fx-font-weight: bold; -fx-text-fill: white;"/>
                     <Label text="Manage your accounts and transactions here."
-                           style="-fx-text-fill: #e0ebf5;"/>
+                           style="-fx-font-size: 14px; -fx-text-fill: #e0ebf5;"/>
                 </VBox>
 
                 <HBox spacing="16">
-                    <VBox spacing="7" HBox.hgrow="ALWAYS"
-                          style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 18; -fx-border-color: #d6e2ef; -fx-border-radius: 10;">
-                        <Label text="Total Accounts"/>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #d7e2ee; -fx-border-radius: 10; -fx-padding: 18;">
+                        <Label text="TOTAL ACCOUNTS"
+                               style="-fx-text-fill: #64748b;"/>
                         <Label fx:id="totalAccountsLabel" text="0"
-                               style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                               style="-fx-font-size: 25px; -fx-font-weight: bold; -fx-text-fill: #12365a;"/>
                     </VBox>
-                    <VBox spacing="7" HBox.hgrow="ALWAYS"
-                          style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 18; -fx-border-color: #d6e2ef; -fx-border-radius: 10;">
-                        <Label text="Total Balance"/>
+
+                    <VBox spacing="8" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #d7e2ee; -fx-border-radius: 10; -fx-padding: 18;">
+                        <Label text="TOTAL BALANCE"
+                               style="-fx-text-fill: #64748b;"/>
                         <Label fx:id="totalBalanceLabel" text="P 0.00"
-                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #087f8c;"/>
+                               style="-fx-font-size: 25px; -fx-font-weight: bold; -fx-text-fill: #087f8c;"/>
                     </VBox>
                 </HBox>
 
-                <Label text="Recent Transactions"
-                       style="-fx-font-size: 19px; -fx-font-weight: bold;"/>
+                <Label text="RECENT TRANSACTIONS"
+                       style="-fx-font-size: 19px; -fx-font-weight: bold; -fx-text-fill: #12365a;"/>
+
                 <TableView fx:id="recentTable" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="recentDateColumn" text="Date" prefWidth="150"/>
+                        <TableColumn fx:id="recentDateColumn" text="Date" prefWidth="180"/>
                         <TableColumn fx:id="recentTypeColumn" text="Type" prefWidth="140"/>
-                        <TableColumn fx:id="recentAccountColumn" text="Account" prefWidth="200"/>
-                        <TableColumn fx:id="recentAmountColumn" text="Amount" prefWidth="160"/>
+                        <TableColumn fx:id="recentAccountColumn" text="Account" prefWidth="210"/>
+                        <TableColumn fx:id="recentAmountColumn" text="Amount (BWP)" prefWidth="160"/>
                     </columns>
                 </TableView>
+
+                <Label fx:id="message"/>
             </VBox>
 
-            <VBox fx:id="accountPane" spacing="16" visible="false" managed="false">
-                <Label text="My Accounts"
-                       style="-fx-font-size: 25px; -fx-font-weight: bold;"/>
-                <Label text="View your bank accounts"/>
+            <!-- My Accounts -->
+            <VBox fx:id="accountPane" spacing="14"
+                  visible="false" managed="false"
+                  maxWidth="Infinity" maxHeight="Infinity">
+                <VBox spacing="4"
+                      style="-fx-background-color: #12365a; -fx-background-radius: 10; -fx-padding: 18;">
+                    <Label text="MY ACCOUNTS"
+                           style="-fx-font-size: 23px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="View your accounts and balances."
+                           style="-fx-text-fill: #e0ebf5;"/>
+                </VBox>
+
+                <HBox spacing="14">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 9; -fx-border-color: #d7e2ee; -fx-border-radius: 9; -fx-padding: 14;">
+                        <Label text="TOTAL ACCOUNTS"
+                               style="-fx-text-fill: #64748b;"/>
+                        <Label fx:id="accountTotalAccountsLabel" text="0"
+                               style="-fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: #12365a;"/>
+                    </VBox>
+
+                    <VBox spacing="6" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 9; -fx-border-color: #d7e2ee; -fx-border-radius: 9; -fx-padding: 14;">
+                        <Label text="TOTAL BALANCE"
+                               style="-fx-text-fill: #64748b;"/>
+                        <Label fx:id="accountTotalBalanceLabel" text="P 0.00"
+                               style="-fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: #087f8c;"/>
+                    </VBox>
+                </HBox>
+
                 <TableView fx:id="accountTable" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="accountNumberColumn" text="Account Number" prefWidth="240"/>
-                        <TableColumn fx:id="accountTypeColumn" text="Account Type" prefWidth="200"/>
-                        <TableColumn fx:id="balanceColumn" text="Balance (BWP)" prefWidth="220"/>
+                        <TableColumn fx:id="accountNumberColumn" text="Account Number" prefWidth="210"/>
+                        <TableColumn fx:id="accountTypeColumn" text="Account Type" prefWidth="160"/>
+                        <TableColumn fx:id="accountBalanceColumn" text="Balance (BWP)" prefWidth="170"/>
+                        <TableColumn fx:id="accountStatusColumn" text="Status" prefWidth="120"/>
                     </columns>
                 </TableView>
             </VBox>
 
-            <VBox fx:id="openAccountPane" spacing="12" visible="false" managed="false">
-                <Label text="Open New Account"
-                       style="-fx-font-size: 25px; -fx-font-weight: bold;"/>
-                <ComboBox fx:id="accountType" promptText="Account type" maxWidth="400"/>
-                <TextField fx:id="openingBalance" promptText="Opening balance (BWP)" maxWidth="400"/>
-                <TextField fx:id="branch" promptText="Branch" maxWidth="400"/>
-                <TextField fx:id="employerName" promptText="Employer name (cheque account)" maxWidth="400"/>
-                <TextField fx:id="employerAddress" promptText="Employer address (cheque account)" maxWidth="400"/>
-                <Button text="Open Account" onAction="#openAccount"/>
+            <!-- Open Account -->
+            <VBox fx:id="openAccountPane" spacing="12"
+                  visible="false" managed="false"
+                  maxWidth="Infinity" maxHeight="Infinity">
+                <VBox spacing="4"
+                      style="-fx-background-color: #12365a; -fx-background-radius: 10; -fx-padding: 18;">
+                    <Label text="OPEN ACCOUNT"
+                           style="-fx-font-size: 23px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Open a new bank account."
+                           style="-fx-text-fill: #e0ebf5;"/>
+                </VBox>
+
+                <ComboBox fx:id="accountType" promptText="Account type" maxWidth="430"/>
+                <TextField fx:id="openingBalance" promptText="Opening balance (BWP)" maxWidth="430"/>
+                <TextField fx:id="branch" promptText="Branch" maxWidth="430"/>
+                <TextField fx:id="employerName" promptText="Employer name (cheque account)" maxWidth="430"/>
+                <TextField fx:id="employerAddress" promptText="Employer address (cheque account)" maxWidth="430"/>
+                <Button text="OPEN ACCOUNT" onAction="#openAccount"/>
                 <Label fx:id="openAccountMessage" wrapText="true"/>
             </VBox>
 
-            <VBox fx:id="transactionPane" spacing="12" visible="false" managed="false">
-                <Label text="Deposit / Withdraw"
-                       style="-fx-font-size: 25px; -fx-font-weight: bold;"/>
-                <ComboBox fx:id="transactionAccount" promptText="Select account" maxWidth="400"/>
-                <ComboBox fx:id="transactionType" promptText="Transaction type" maxWidth="400"/>
-                <TextField fx:id="transactionAmount" promptText="Amount (BWP)" maxWidth="400"/>
-                <TextField fx:id="transactionDescription" promptText="Description (optional)" maxWidth="400"/>
-                <Button text="Submit Transaction" onAction="#submitTransaction"/>
+            <!-- Deposit / Withdrawal -->
+            <VBox fx:id="transactionsPane" spacing="12"
+                  visible="false" managed="false"
+                  maxWidth="Infinity" maxHeight="Infinity">
+                <VBox spacing="4"
+                      style="-fx-background-color: #12365a; -fx-background-radius: 10; -fx-padding: 18;">
+                    <Label text="DEPOSIT / WITHDRAWAL"
+                           style="-fx-font-size: 23px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Manage transactions for your selected account."
+                           style="-fx-text-fill: #e0ebf5;"/>
+                </VBox>
+
+                <ComboBox fx:id="transactionAccount" promptText="Select account" maxWidth="430"/>
+                <ComboBox fx:id="transactionType" promptText="Transaction type" maxWidth="430"/>
+                <TextField fx:id="transactionAmount" promptText="Amount (BWP)" maxWidth="430"/>
+                <TextField fx:id="transactionDescription" promptText="Description" maxWidth="430"/>
+                <Button text="SUBMIT TRANSACTION" onAction="#submitTransaction"/>
                 <Label fx:id="transactionMessage" wrapText="true"/>
             </VBox>
 
-            <VBox fx:id="historyPane" spacing="12" visible="false" managed="false">
-                <Label text="Transaction History"
-                       style="-fx-font-size: 25px; -fx-font-weight: bold;"/>
+            <!-- Transaction History -->
+            <VBox fx:id="historyPane" spacing="12"
+                  visible="false" managed="false"
+                  maxWidth="Infinity" maxHeight="Infinity">
+                <VBox spacing="4"
+                      style="-fx-background-color: #12365a; -fx-background-radius: 10; -fx-padding: 18;">
+                    <Label text="TRANSACTION HISTORY"
+                           style="-fx-font-size: 23px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Review the date, type, amount and description of transactions."
+                           style="-fx-text-fill: #e0ebf5;"/>
+                </VBox>
+
                 <HBox spacing="10">
-                    <ComboBox fx:id="historyAccount" promptText="Select account" prefWidth="300"/>
-                    <Button text="Load History" onAction="#loadHistory"/>
+                    <ComboBox fx:id="historyAccount" promptText="Select account" prefWidth="320"/>
+                    <Button text="LOAD HISTORY" onAction="#loadHistory"/>
                 </HBox>
-                <Label fx:id="historyMessage"/>
+
+                <Label fx:id="historyMessage" wrapText="true"/>
+
                 <TableView fx:id="historyTable" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="historyDateColumn" text="Date" prefWidth="170"/>
-                        <TableColumn fx:id="historyTypeColumn" text="Type" prefWidth="150"/>
-                        <TableColumn fx:id="historyAmountColumn" text="Amount" prefWidth="160"/>
-                        <TableColumn fx:id="historyDescriptionColumn" text="Description" prefWidth="300"/>
+                        <TableColumn fx:id="historyDateColumn" text="Date" prefWidth="190"/>
+                        <TableColumn fx:id="historyTypeColumn" text="Type" prefWidth="140"/>
+                        <TableColumn fx:id="historyAmountColumn" text="Amount (BWP)" prefWidth="160"/>
+                        <TableColumn fx:id="historyDescriptionColumn" text="Description" prefWidth="280"/>
                     </columns>
                 </TableView>
             </VBox>
-
         </StackPane>
     </center>
 </BorderPane>
